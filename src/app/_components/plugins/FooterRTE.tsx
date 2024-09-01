@@ -1,15 +1,24 @@
+'use client'
+
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import React, { useCallback } from 'react';
 import { $generateHtmlFromNodes } from '@lexical/html'
 
 type footerProps = {
     onCancel: () => void;
-    onSave: (data: any) => void;
+    title: string;
+    onSave: (data: {
+        html: string;
+        json: any
+        title: string
+    }) => void;
+
 };
 
 
 function FooterRTE({
     onCancel,
+    title,
     onSave
 }: footerProps) {
     const [editor] = useLexicalComposerContext();
@@ -18,11 +27,11 @@ function FooterRTE({
         editor.getEditorState().read(() => {
 
             const html = $generateHtmlFromNodes(editor);
-            onSave(html);
+            onSave({ html: html, json: editor.getEditorState().toJSON(), title: title });
             // const htmlContent = convertEditorStateToHTML(editor.getEditorState());
             // console.log('HTML Content:', htmlContent);
         });
-    }, [editor]);
+    }, [editor, title]);
 
     return <div className='p-2 flex justify-end border-t border-slate-200 gap-x-3'>
         <button onClick={onCancel} className='bg-red-400 text-white rounded-md p-2 px-4 text-sm'>Cancel</button>

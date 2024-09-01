@@ -7,6 +7,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  unique,
   varchar,
 } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -39,12 +40,46 @@ export const posts = createTable(
   })
 );
 
+export const tags = createTable(
+  "tags",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+    name: varchar("title", { length: 256 }),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  }
+);
+
+
+
+
+// export const noteTags = createTable(
+//   "note_tags",
+//   {
+//     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+//     note_id: bigint("note_id", { mode: "number" })
+//       .notNull()
+//       .references(() => notes.id),
+//       tag_id: bigint("tag_id", { mode: "number" })
+//       .notNull()
+//       .references(() => tags.id),
+//     createdAt: timestamp("created_at")
+//       .default(sql`CURRENT_TIMESTAMP`)
+//       .notNull(),
+//   }
+// );
+
+
 export const notes = createTable(
   "notes",
   {
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
     title: varchar("title", { length: 256 }),
     contents: text("contents"),
+    root_contents: text("root_contents"),
     createdById: varchar("created_by", { length: 255 })
       .notNull()
       .references(() => users.id),
@@ -55,6 +90,17 @@ export const notes = createTable(
     .notNull(),
   }
 );
+
+export const notesRelations = relations(notes, ({ many }) => ({
+  tags: many(notes),
+}));
+
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  notes: many(notes),
+}));
+
+
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })

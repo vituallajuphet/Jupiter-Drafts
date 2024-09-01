@@ -9,10 +9,14 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { lexicalConfig } from './config';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import '~/styles/lexical.css';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import FooterRTE from './plugins/FooterRTE';
 import TreeViewPlugin from './plugins/Treeplugin';
 import { saveNote } from './actions';
+import { Input } from '@headlessui/react';
+import clsx from 'clsx';
+import SelectControl from './controls/Combobox';
+import { api } from '~/trpc/react';
 
 const placeholder = 'Enter some rich text...';
 
@@ -23,13 +27,27 @@ const editorConfig = {
     onError(error: Error) {
         throw error;
     },
-    // The editor theme
-    theme: lexicalConfig,
+    // The editor themetheme: lexicalConfig,
 };
 
-export default function RTEEditor() {
+export default function RTEEditor({ onSave }) {
     const [editmode, setEditMode] = useState(false);
-    const [title, setTitle] = useState('');
+    const [theTitle, setTitle] = useState('');
+    const [selected, setSelected] = useState<null | { name: string, id: number }>();
+
+    const [tags, {
+        refetch
+    }] = api.tags.getAllTags.useSuspenseQuery();
+
+    const tagOptions = useMemo(() => {
+        return tags.map(tag => (
+            {
+                id: tag.id,
+                name: tag.name || ''
+            }
+        ))
+
+    }, [tags])
 
     if (!editmode) {
         return (
@@ -52,10 +70,19 @@ export default function RTEEditor() {
     return (
         <>
             <div className="mb-4">
-                <h2>Title</h2>
-                <input type="text" value={title} onChange={(e) => {
+                <h2 className='text-slate-300 text-xs '>Title</h2>
+                <Input type="text" value={theTitle} onChange={(e) => {
                     setTitle(e.target.value)
-                }} className="w-full p-2 py-1.5 mt-2 bg-slate-500 text-slate-200 rounded-md" />
+                }} className={clsx(
+                    'mt-1 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
+                    'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                )} />
+                <div className='mt-6'>
+                    <h2 className='text-slate-300 mb-1 text-xs'>Category Label</h2>
+                    <SelectControl options={tagOptions} onChange={(par) => {
+                        setSelected(par)
+                    }} />
+                </div>
             </div>
             <LexicalComposer initialConfig={editorConfig}>
                 <div className="editor-container">
@@ -77,15 +104,24 @@ export default function RTEEditor() {
                         <HistoryPlugin />
                         <AutoFocusPlugin />
                         {/* <TreeViewPlugin /> */}
-                        <FooterRTE onCancel={() => {
-                            setEditMode(false)
-                        }}
-                            onSave={async (data) => {
-                                await saveNote({
-                                    title: title,
-                                    contents: data
-                                });
+                        <FooterRTE
+                            onCancel={() => {
+                                console.log("theTitletheTitle", theTitle)
                                 setEditMode(false)
+                            }}
+                            title={theTitle}
+                            onSave={async (data) => {
+
+
+                                await saveNote({
+                                    title: data.title,
+                                    contents: data.html,
+                                    root_contents: JSON.stringify(data.json),
+                                    tag_id: selected?.id
+                                });
+                                onSave()
+                                setEditMode(false)
+
                             }}
                         />
                     </div>

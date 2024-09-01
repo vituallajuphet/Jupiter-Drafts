@@ -9,11 +9,17 @@ import { redirect } from "next/navigation";
 export const saveNote = async (note: {
     title: string,
     contents: string
+    root_contents: string,
+    tag_id?: number
 } ) => { 
-    api.notes.create({
+   await  api.notes.create({
         title: note.title,
-        contents: note.contents
+        contents: note.contents,
+        root_contents: note.root_contents,
+        tag_id: note?.tag_id
     });
+
+
 
     redirect('/');
 

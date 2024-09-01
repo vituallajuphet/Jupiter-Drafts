@@ -62,7 +62,11 @@ export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      httpOptions: {
+        timeout: 20000, // increase to 10 seconds
+      },
+      
     })
     /**
      * ...add more providers here.
