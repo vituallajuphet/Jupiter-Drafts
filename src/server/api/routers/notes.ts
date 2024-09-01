@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { notes, noteTags, tags } from "~/server/db/schema";
+import { notes, tags } from "~/server/db/schema";
 
 export const notesRouter = createTRPCRouter({
 
