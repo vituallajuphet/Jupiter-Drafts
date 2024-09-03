@@ -31,76 +31,52 @@ export const posts = createTable(
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (example) => ({
     createdByIdIdx: index("created_by_idx").on(example.createdById),
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
-export const tags = createTable(
-  "tags",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    name: varchar("title", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`)
+export const tags = createTable("tags", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement().notNull(),
+  name: varchar("title", { length: 256 }),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  }
-);
-
-
-
-
-// export const noteTags = createTable(
-//   "note_tags",
-//   {
-//     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-//     note_id: bigint("note_id", { mode: "number" })
-//       .notNull()
-//       .references(() => notes.id),
-//       tag_id: bigint("tag_id", { mode: "number" })
-//       .notNull()
-//       .references(() => tags.id),
-//     createdAt: timestamp("created_at")
-//       .default(sql`CURRENT_TIMESTAMP`)
-//       .notNull(),
-//   }
-// );
-
-
-export const notes = createTable(
-  "notes",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    title: varchar("title", { length: 256 }),
-    contents: text("contents"),
-    root_contents: text("root_contents"),
-    createdById: varchar("created_by", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`)
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  }
-);
+});
 
-export const notesRelations = relations(notes, ({ many }) => ({
-  tags: many(notes),
+export const notes = createTable("notes", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  title: varchar("title", { length: 256 }),
+  contents: text("contents"),
+  root_contents: text("root_contents"),
+  tagID: bigint("tagID", { mode: "number" })
+    .notNull()
+    .references(() => tags.id),
+  createdById: varchar("created_by", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const notesRelations = relations(notes, ({ one }) => ({
+  tag: one(tags, {
+    fields: [notes.tagID],
+    references: [tags.id],
+  }),
 }));
-
-
-export const tagsRelations = relations(tags, ({ many }) => ({
-  notes: many(notes),
-}));
-
-
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
@@ -147,7 +123,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_user_id_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -167,7 +143,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_user_id_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -183,5 +159,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
