@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
-const SideBar = () => {
+const SideBar = ({ session }) => {
   const [tags, { refetch }] = api.tags.getAllTags.useSuspenseQuery();
 
   const [label, setLabel] = useState("");
@@ -29,13 +29,15 @@ const SideBar = () => {
     <aside className="w-[300px] p-4 py-6">
       <div className="flex justify-between">
         <h2 className="text-sm uppercase">Labels</h2>
-        <button
-          type="button"
-          onClick={() => setOpenForm(!openForm)}
-          className="h-6 w-6 rounded-full bg-slate-500"
-        >
-          <i className={openForm ? "fa fa-minus" : "fa fa-plus"}></i>
-        </button>
+        {session ? (
+          <button
+            type="button"
+            onClick={() => setOpenForm(!openForm)}
+            className="h-6 w-6 rounded-full bg-slate-500"
+          >
+            <i className={openForm ? "fa fa-minus" : "fa fa-plus"}></i>
+          </button>
+        ) : null}
       </div>
       {openForm ? (
         <form

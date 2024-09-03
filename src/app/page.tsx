@@ -4,18 +4,23 @@ import { api, HydrateClient } from "~/trpc/server";
 import NotesForms from "./_components/forms/NoteForms";
 import SideBar from "./_components/Aside";
 import { iconsList } from "./_components/icons/data";
+import { getServerAuthSession } from "~/server/auth";
 
 export default async function Home() {
   void api.notes.getAllNotes.prefetch();
   void api.tags.getAllTags.prefetch();
-
+  const session = await getServerAuthSession();
   return (
     <HydrateClient>
       <div>
         <div className="flex min-h-screen flex-col bg-slate-100 text-slate-200 lg:flex-row dark:bg-slate-700">
-          <SideBar />
+          <SideBar session={session} />
           <main className="flex w-full flex-col items-center bg-slate-600 p-4 py-12">
-            <NotesForms />
+            {session ? (
+              <NotesForms />
+            ) : (
+              <div className="text-lg">Sign In to Start Drafting...</div>
+            )}
           </main>
         </div>
       </div>
