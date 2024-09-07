@@ -3,11 +3,12 @@ import { EditorState } from "lexical";
 import { useEffect } from "react";
 export const OnloadPlugin = ({ data }) => {
   const [editor] = useLexicalComposerContext();
-  console.log("data", data);
 
   useEffect(() => {
     if (!data) return;
-    const init = editor.parseEditorState(data);
+    const init = editor.parseEditorState(
+      JSON.parse(data?.root_contents as any),
+    );
     editor.setEditorState(init);
   }, [editor, data]);
 

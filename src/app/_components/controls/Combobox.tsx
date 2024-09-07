@@ -36,6 +36,7 @@ export default function SelectControl(props: SelectControlTypes) {
     >
       <div className="relative">
         <ComboboxInput
+          autoComplete="off"
           className={clsx(
             "w-full rounded-lg border-none bg-white/5 py-1.5 pl-3 pr-8 text-sm/6 text-white",
             "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25",

@@ -28,6 +28,29 @@ export const notesRouter = createTRPCRouter({
       });
     }),
 
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        title: z.string(),
+        contents: z.string(),
+        root_contents: z.string(),
+        tag_id: z.number(),
+        note_id: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(notes)
+        .set({
+          title: input.title,
+          contents: input.contents,
+          tagID: input.tag_id,
+          root_contents: input.root_contents,
+        })
+        .where(eq(notes.id, input.note_id));
+    }),
+
   getLatest: publicProcedure.query(async ({ ctx }) => {
     const note = await ctx.db.query.posts.findFirst({
       orderBy: (notes, { desc }) => [desc(notes.createdAt)],

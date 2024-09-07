@@ -72,7 +72,7 @@ const NotesForms = () => {
             //   JSON.parse(note.root_contents as any) as EditorState,
             // );
 
-            setSelectedData(JSON.parse(note.root_contents as any));
+            setSelectedData(note);
             setTitle(note.title as string);
             // @ts-ignore
             setSelected({ name: note?.tag?.name as string, id: note.tagID });

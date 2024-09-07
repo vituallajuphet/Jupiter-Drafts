@@ -4,7 +4,6 @@ import { useEffect } from "react";
 export const MyOnChangePlugin = ({ onChange }) => {
   const [editor] = useLexicalComposerContext();
 
-  console.log("editor", editor);
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
       onChange(editorState);

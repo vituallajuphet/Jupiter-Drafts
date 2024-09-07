@@ -13,7 +13,7 @@ import "~/styles/lexical.css";
 import { useEffect, useMemo, useState } from "react";
 import FooterRTE from "./plugins/FooterRTE";
 import TreeViewPlugin from "./plugins/Treeplugin";
-import { saveNote } from "./actions";
+import { saveNote, updateNote } from "./actions";
 import { Input } from "@headlessui/react";
 import clsx from "clsx";
 import SelectControl from "./controls/Combobox";
@@ -155,12 +155,22 @@ export default function RTEEditor({
               title={theTitle}
               onSave={async (data) => {
                 if (selected?.id) {
-                  await saveNote({
-                    title: data.title,
-                    contents: data.html,
-                    root_contents: JSON.stringify(data.json),
-                    tag_id: selected?.id,
-                  });
+                  if (!onloadData) {
+                    await saveNote({
+                      title: data.title,
+                      contents: data.html,
+                      root_contents: JSON.stringify(data.json),
+                      tag_id: selected?.id,
+                    });
+                  } else {
+                    await updateNote({
+                      title: data.title,
+                      contents: data.html,
+                      root_contents: JSON.stringify(data.json),
+                      tag_id: selected?.id,
+                      note_id: onloadData.id,
+                    });
+                  }
                   onSave();
 
                   onChangeTitle("");
