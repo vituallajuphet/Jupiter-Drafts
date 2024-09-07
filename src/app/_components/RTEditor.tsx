@@ -144,7 +144,7 @@ export default function RTEEditor({
             <HistoryPlugin />
             <AutoFocusPlugin />
             <MyOnChangePlugin onChange={onChangeEditorState} />
-            <TreeViewPlugin />
+            {/* <TreeViewPlugin /> */}
             <OnloadPlugin data={onloadData} />
             <FooterRTE
               onCancel={() => {

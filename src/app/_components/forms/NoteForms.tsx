@@ -51,6 +51,10 @@ const NotesForms = () => {
           onSave={async () => {
             await handleSave();
             setOpenEditor(false);
+            setEditorState(undefined);
+            setTitle("");
+            setSelected(null);
+            setSelectedData(null);
           }}
           onCancel={() => {
             setOpenEditor(false);
@@ -65,8 +69,6 @@ const NotesForms = () => {
         onEdit={(id: number) => {
           setOpenEditor(true);
           const note = notes.find((note) => note.id === id);
-
-          console.log("note", notes);
           if (note) {
             // setEditorState(
             //   JSON.parse(note.root_contents as any) as EditorState,

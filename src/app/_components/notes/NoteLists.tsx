@@ -6,7 +6,7 @@ import moment from "moment";
 import ActionMenu from "./ActionMenu";
 import { ellipsis, extractTextFromLexicalJSON, removeHtml } from "../helper";
 
-const getRandomTailwindColor = () => {
+const getbgColor = (i) => {
   const colors = [
     "red",
     "yellow",
@@ -27,12 +27,7 @@ const getRandomTailwindColor = () => {
     "amber",
   ];
 
-  const shades = ["50", "100", "200", "300"];
-
-  // Randomly select a color and a shade
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
-  const randomShade = shades[Math.floor(Math.random() * shades.length)];
-  return `bg-${randomColor}-${randomShade}`;
+  return `bg-${colors[i % colors.length]}-100`;
 };
 
 type NoteListsProps = {
@@ -47,13 +42,13 @@ export const NoteLists = ({ notes, onRemove, onEdit }: NoteListsProps) => {
       <h1 className="mb-4 text-slate-900 dark:text-white">Drafts</h1>
       {notes ? (
         <ul className="grid grid-cols-4 gap-4">
-          {notes.map((note) => {
+          {notes.map((note, i) => {
             const contentText = extractTextFromLexicalJSON(note.contents);
 
             return (
               <li
                 key={note.id}
-                className={`min-h-[200px] rounded-lg p-2 text-slate-700 ${getRandomTailwindColor()} relative`}
+                className={`min-h-[200px] rounded-lg p-2 text-slate-700 ${getbgColor(i)} relative`}
               >
                 <div className="absolute right-4 top-2 z-20">
                   <ActionMenu
