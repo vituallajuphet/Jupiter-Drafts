@@ -156,6 +156,7 @@ export default function RTEEditor({
               onSave={async (data) => {
                 if (selected?.id) {
                   if (!onloadData) {
+                    console.log("saving...");
                     await saveNote({
                       title: data.title,
                       contents: data.html,
@@ -163,6 +164,7 @@ export default function RTEEditor({
                       tag_id: selected?.id,
                     });
                   } else {
+                    console.log("updating...");
                     await updateNote({
                       title: data.title,
                       contents: data.html,

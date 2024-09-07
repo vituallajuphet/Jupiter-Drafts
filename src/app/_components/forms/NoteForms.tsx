@@ -58,6 +58,10 @@ const NotesForms = () => {
           }}
           onCancel={() => {
             setOpenEditor(false);
+            setEditorState(undefined);
+            setTitle("");
+            setSelected(null);
+            setSelectedData(null);
           }}
           openEditor={openEditor}
           onClickEditor={() => {
