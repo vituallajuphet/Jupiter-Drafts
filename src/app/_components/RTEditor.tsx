@@ -21,6 +21,8 @@ import { api } from "~/trpc/react";
 import { set } from "zod";
 import { EditorState } from "lexical";
 import { MyOnChangePlugin } from "./plugins/EditorChangePlugin";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { OnloadPlugin } from "./plugins/OnloadPlugin";
 
 const placeholder = "Enter some rich text...";
 
@@ -41,6 +43,7 @@ type RTEEditorProps = {
   onCancel?: () => void;
   theTitle: string;
   onChangeTitle: (title: string) => void;
+  onloadData?: any;
   selected?: null | {
     name: string;
     id: number;
@@ -60,6 +63,7 @@ export default function RTEEditor({
   selected,
   onChangeSelected,
   editorState,
+  onloadData,
   onChangeEditorState,
 }: RTEEditorProps) {
   const [tags, { refetch }] = api.tags.getAllTags.useSuspenseQuery();
@@ -70,6 +74,8 @@ export default function RTEEditor({
       name: tag.name || "",
     }));
   }, [tags]);
+
+  console.log("onloadData", onloadData);
 
   if (!openEditor) {
     return (
@@ -139,6 +145,7 @@ export default function RTEEditor({
             <AutoFocusPlugin />
             <MyOnChangePlugin onChange={onChangeEditorState} />
             <TreeViewPlugin />
+            <OnloadPlugin data={onloadData} />
             <FooterRTE
               onCancel={() => {
                 if (onCancel) {

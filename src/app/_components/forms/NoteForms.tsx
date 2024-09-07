@@ -10,9 +10,11 @@ import { EditorState } from "lexical";
 const NotesForms = () => {
   const [notes, { refetch }] = api.notes.getAllNotes.useSuspenseQuery();
   const [openEditor, setOpenEditor] = useState(false);
+  const [selectedData, setSelectedData] = useState<any>();
 
   const [editorState, setEditorState] = useState<EditorState>();
   const handleEditorChange = (editorState: EditorState) => {
+    console.log("editorState", editorState);
     setEditorState(editorState);
   };
 
@@ -34,6 +36,7 @@ const NotesForms = () => {
     <>
       <div className="w-full max-w-[600px]">
         <RTEEditor
+          onloadData={selectedData}
           editorState={editorState as EditorState}
           onChangeEditorState={handleEditorChange}
           onChangeSelected={(selected) => {
@@ -65,6 +68,11 @@ const NotesForms = () => {
 
           console.log("note", notes);
           if (note) {
+            // setEditorState(
+            //   JSON.parse(note.root_contents as any) as EditorState,
+            // );
+
+            setSelectedData(JSON.parse(note.root_contents as any));
             setTitle(note.title as string);
             // @ts-ignore
             setSelected({ name: note?.tag?.name as string, id: note.tagID });
