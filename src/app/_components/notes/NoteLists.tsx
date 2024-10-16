@@ -37,6 +37,8 @@ type NoteListsProps = {
 };
 
 export const NoteLists = ({ notes, onRemove, onEdit }: NoteListsProps) => {
+
+  console.log("notes", notes)
   return (
     <div className="w-full">
       <h1 className="mb-4 text-slate-900 dark:text-white">Drafts</h1>
@@ -70,8 +72,9 @@ export const NoteLists = ({ notes, onRemove, onEdit }: NoteListsProps) => {
                       {ellipsis(removeHtml(contentText), 160)}
                     </div>
                   </div>
-                  <div className="text-xs">
-                    {moment(note.createdAt).format("MMM DD, YYYY")}
+                  <div className="text-xs flex flex-col justify-between">
+                    <span>{moment(note.createdAt).format("MMM DD, YYYY")}</span>
+                    <span className="font-bold italic">{note.tag?.name}</span>
                   </div>
                 </div>
               </li>

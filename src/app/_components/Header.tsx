@@ -1,10 +1,14 @@
 import Link from "next/link"
 import { getServerAuthSession } from "~/server/auth";
 import { Input } from '@headlessui/react'
+import Image from "next/image";
 
 export const Header = async () => {
 
+
+
     const session = await getServerAuthSession();
+
     return <header>
         <div className="dark:bg-slate-900 bg-white p-4 py-3 flex justify-between items-center">
             <div className="flex flex-col lg:flex-row items-center gap-4 flex-1">
@@ -37,9 +41,11 @@ export const Header = async () => {
                         </Link>
                     </li>
                     <li className="ml-8 ">
-                        <Link href={session ? '/api/auth/signout' : '/api/auth/signin'} className="flex gap-x-2">
+                        <Link href={session ? '/api/auth/signout' : '/api/auth/signin'} className="flex flex-row items-center gap-x-2">
 
-                            <i className="fa fa-user"></i>
+                          {session ? (<div>
+                                <Image src={session.user.image ?? ''} alt={session.user.name} width={30} height={30} className="rounded-full" />
+                          </div>) :   <i className="fa fa-user"></i>}
                             <span className="text-sm">{session ? 'Sign Out' : 'Sign In'}</span>
                         </Link>
                     </li>

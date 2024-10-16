@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import {
@@ -66,22 +66,24 @@ export const notesRouter = createTRPCRouter({
       where: (note) => eq(note.createdById, ctx.session?.user.id),
       // Order by createdAt descending
       orderBy: (notes, { desc }) => [desc(notes.createdAt)],
+      
     });
 
-    if (notes.length) {
-      const tags = await ctx.db.query.tags.findFirst({
-        where: (tag) => eq(tag.id, notes[0]?.tagID),
-      });
+      // Step 2: Extract the unique tag IDs from notes
+    const tagIds = notes.map((note) => note.tagID);
 
-      return notes.map((note) => {
-        return {
-          ...note,
-          tag: tags,
-        };
-      });
-    }
+    // Step 3: Fetch tags that correspond to those tag IDs
+    const tagsData = await ctx.db.query.tags.findMany({
+      where: (tag) => inArray(tag.id, tagIds),
+    });
 
-    return notes;
+    // Step 4: Combine notes and tags
+    const notesWithTags = notes.map((note) => ({
+      ...note,
+      tag: tagsData.find((tag) => tag.id === note.tagID) ?? null,
+    }));
+
+    return notesWithTags;
   }),
   deleteNote: publicProcedure
     .input(z.object({ id: z.number() }))

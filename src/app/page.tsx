@@ -10,6 +10,7 @@ export default async function Home() {
   void api.notes.getAllNotes.prefetch();
   void api.tags.getAllTags.prefetch();
   const session = await getServerAuthSession();
+
   return (
     <HydrateClient>
       <div>
@@ -19,7 +20,7 @@ export default async function Home() {
             {session ? (
               <NotesForms />
             ) : (
-              <div className="text-lg">Sign In to Start Drafting...</div>
+              <div className="text-4xl h-full w-full flex items-center justify-center "><h2>Sign In to Start Drafting...</h2></div>
             )}
           </main>
         </div>
